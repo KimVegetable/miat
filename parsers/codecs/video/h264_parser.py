@@ -761,20 +761,20 @@ def slice_layer_without_partitioning_rbsp(bs, sps, pps, nal_unit_type, nal_ref_i
     """
     # Parse slice header
     slice_header_info = parse_slice_header(bs, sps, pps, nal_unit_type, nal_ref_idc)
+    slice_data_info = {}
+    # # Parse slice data - "all" categories
+    # slice_data_info = parse_slice_data(
+    #     bs, 
+    #     sps, 
+    #     pps, 
+    #     nal_unit_type, 
+    #     nal_ref_idc, 
+    #     category="all",
+    #     slice_header=slice_header_info
+    # )
 
-    # Parse slice data - "all" categories
-    slice_data_info = parse_slice_data(
-        bs, 
-        sps, 
-        pps, 
-        nal_unit_type, 
-        nal_ref_idc, 
-        category="all",
-        slice_header=slice_header_info
-    )
-
-    # Trailing bits
-    parse_rbsp_slice_trailing_bits(bs, pps.get('entropy_coding_mode_flag', False))
+    # # Trailing bits
+    # parse_rbsp_slice_trailing_bits(bs, pps.get('entropy_coding_mode_flag', False))
 
     return slice_header_info, slice_data_info
 
