@@ -1,0 +1,4 @@
+bitarray==3.0.0
+bitstring==4.3.0
+ffmpeg==1.4
+numpy==2.2.2
