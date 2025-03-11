@@ -80,7 +80,7 @@ def main():
                             if video['video_streams'][0]['nal_units']['slice_segments'][0]['header'].get('pic_order_cnt_lsb', '0') == 0:
                                 print(f"[Analysis] \'{video['file_path']}\' is a unknown file. (There is no unreferenced frames.)")
                             else:
-                                print(f"[Analysis] \'{video['file_path']}\' is a forgery file. (There is no unreferenced frames.)")
+                                print(f"[Analysis] \'{video['file_path']}\' is a edited file. (There is no unreferenced frames.)")
 
                         elif video['video_streams'][0]['nal_units']['sps']['pic_order_cnt_type'] == 1:
                             if video['video_streams'][0]['nal_units']['slice_segments'][0]['header']['slice_type'] % 5 in [2, 4]:
@@ -91,13 +91,13 @@ def main():
                             if video['video_streams'][0]['nal_units']['slice_segments'][0]['header']['frame_num'] == 0:
                                 print(f"[Analysis] \'{video['file_path']}\' is a unknown file. (There is no unreferenced frames.)")
                             else:
-                                print(f"[Analysis] \'{video['file_path']}\' is a forgery file. (There is no unreferenced frames.)")
+                                print(f"[Analysis] \'{video['file_path']}\' is a edited file. (There is no unreferenced frames.)")
 
                     elif video['video_streams'][0]['codec'] == 'H.265':
                         if video['video_streams'][0]['nal_units']['slice_segments'][0]['header'].get('pic_order_cnt_lsb', 0) == 0:
                             print(f"[Analysis] \'{video['file_path']}\' is a unknown file. (There is no unreferenced frames.)")
                         else:
-                            print(f"[Analysis] \'{video['file_path']}\' is a forgery file. (There is no unreferenced frames.)")
+                            print(f"[Analysis] \'{video['file_path']}\' is a edited file. (There is no unreferenced frames.)")
 
                 else:
                     media_time = 0
@@ -179,7 +179,7 @@ def main():
 
                             os.makedirs(unref_dir, exist_ok=True)
 
-                            print(f"[Analysis] \'{video['file_path']}\' is a forgery file. Extracted unreferenced frames.")
+                            print(f"[Analysis] \'{video['file_path']}\' is a edited file. Extracted unreferenced frames.")
 
                             try:
                                 result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -196,13 +196,15 @@ def main():
                                                  'extracted_frame_%04d.png')
                                 ]
                                 result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                            except Exception:
+                                print("Please check if the file '.\\utils\\ffmpeg\\ffmpeg.exe' exists.")
 
                             if result.returncode != 0:
                                 print(f"ffmpeg error: {result.stderr.decode('utf-8')}")
                                 return
 
                     else:
-                        print(f"[Analysis] \'{video['file_path']}\' is a forgery file. (There is no unreferenced frames)")
+                        print(f"[Analysis] \'{video['file_path']}\' is a edited file. (There is no unreferenced frames)")
 
         # Forensic analysis for rotated and flipped videos
         if args.apple:
