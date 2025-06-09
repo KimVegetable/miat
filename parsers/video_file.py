@@ -17,7 +17,7 @@ class VideoFile:
 
     def determine_container(self):
         extension = os.path.splitext(self.file_path)[1].lower()
-        if extension in ['.mp4', '.mov', '.heic', '.aac', '.m4a']:
+        if extension in ['.mp4', '.mov', '.heic', '.aac', '.m4a', '.3gp']:
             self.container = MP4Parser(self.file_path)
         elif extension in ['.h264', '.h265']:
             self.container = extension[1:]  # codec

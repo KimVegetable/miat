@@ -1284,34 +1284,6 @@ def more_rbsp_trailing_data(bs):
     # placeholder
     return False
 
-
-def parse_residual_luma(bs, sps, pps, slice_header, start_idx, end_idx, category):
-    """
-    Implements residual_luma(...) (7.3.5.3.1).
-    - handle Intra16x16 DC, AC
-    - handle transform_size_8x8_flag
-    - handle CAVLC vs CABAC
-    """
-    result = {}
-    # In real code, we'd check if slice_header indicates Intra16x16, etc.
-    # For demonstration:
-    is_intra16x16 = False  # placeholder
-    transform_size_8x8_flag = slice_header["transform_8x8_mode_flag"]
-    entropy_coding_mode_flag = slice_header["entropy_coding_mode_flag"]
-    coded_block_pattern_luma = 0xF  # placeholder
-
-    if start_idx == 0 and is_intra16x16:
-        # residual_block(i16x16DClevel, 0..15, 16)
-        # placeholder
-        pass
-
-    # For each 8x8 block -> possibly parse 4x4 or 8x8
-    # We'll not replicate the entire logic here. Just a placeholder.
-
-    result["luma_blocks"] = "luma_blocks_placeholder"
-    return result
-
-
 def rbsp_slice_trailing_bits(bs, entropy_coding_mode_flag=False):
     """
     Implements 7.3.2.10: rbsp_slice_trailing_bits().

@@ -6,6 +6,7 @@ from parsers.images.jpeg_parser import JPEGParser
 from parsers.images.png_parser import PNGParser
 from parsers.images.dng_parser import DNGParser
 from parsers.images.tiff_parser import TIFFParser
+from parsers.images.webp_parser import WEBPParser
 
 
 class ImageFile:
@@ -30,6 +31,8 @@ class ImageFile:
                 self.image_parser = DNGParser(data)
             elif extension in ['.tiff']:
                 self.image_parser = TIFFParser(data)
+            elif extension in ['.webp']:
+                self.image_parser = WEBPParser(data)
             else:
                 raise ValueError("Unsupported file format")
 

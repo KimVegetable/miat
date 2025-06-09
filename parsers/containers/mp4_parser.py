@@ -426,15 +426,29 @@ class MP4Parser:
                                 'avg_bitrate': avg_bitrate
                             })
 
+                            sub_offset = sub_start + 13
+                            if sub_offset + 1 > descriptor_end:
+                                break
+                            sub_tag = data[sub_offset]
+                            sub_offset += 1
+
+                            sub_size = 0
+                            while True:
+                                if sub_offset >= descriptor_end:
+                                    break
+                                sb = data[sub_offset]
+                                sub_offset += 1
+                                sub_size = (sub_size << 7) | (sb & 0x7F)
+                                if not (sb & 0x80):
+                                    break
+
+                            sub_start = sub_offset
+                            sub_end = sub_start + sub_size
+                            if sub_end > descriptor_end:
+                                break
 
                             # sub_tag == 0x05:  # DecSpecificInfoTag
-                            sub_start = sub_start + 13
-                            sub_end = sub_start + 4
-
-                            sub_tag = data[sub_start]
-
                             if sub_tag == 0x05:
-                                sub_start += 2
                                 dec_specific_info = data[sub_start:sub_end]
                                 bit_pos = 0
 
@@ -450,6 +464,20 @@ class MP4Parser:
 
                                 channel_config, bit_pos = self.read_bits(dec_specific_info, bit_pos, 4)
 
+                                sbrPresentFlag = -1
+                                if audio_object_type == 5:
+                                    extensionAudioObjectType = audio_object_type
+                                    sbrPresentFlag = 1
+                                    extensionSamplingFrequencyIndex, bit_pos = self.read_bits(dec_specific_info, bit_pos, 4)
+                                    if extensionSamplingFrequencyIndex == 0x0F:
+                                        extensionSamplingFrequency, bit_pos = self.read_bits(dec_specific_info, bit_pos, 24)
+                                    audio_object_type, bit_pos = self.read_bits(dec_specific_info, bit_pos, 5)
+                                    if audio_object_type == 31:
+                                        ext_aot, bit_pos = self.read_bits(dec_specific_info, bit_pos, 6)
+                                        audio_object_type = 32 + ext_aot
+                                else:
+                                    extensionAudioObjectType = 0
+
                                 # GA Specific Config
                                 frame_length_flag = 0
                                 depends_on_core_coder = 0
@@ -460,6 +488,9 @@ class MP4Parser:
                                     extension_flag, bit_pos = self.read_bits(dec_specific_info, bit_pos, 1)
                                     if depends_on_core_coder == 1:
                                         bit_pos += 14  # skip coreCoderDelay
+
+                                if extensionAudioObjectType == 5:
+                                    audio_object_type = extensionAudioObjectType
 
                                 audio_specific_config = {
                                     'audio_object_type': audio_object_type,
