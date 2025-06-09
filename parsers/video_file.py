@@ -180,12 +180,8 @@ class VideoFile:
             if video_stream == None:
                 video_stream = self.demux_video(codec_type)
             # video_stream = self.demux_using_container()
-            # fp = open(r'G:\MIAT-test\target\cut\tmp.h265', 'wb')
-            # fp.write(video_stream)
-            # fp.close()
             self.handle_hevc(video_stream, sps, pps, vps)
         # Add other video codecs here
-
 
     # Test code
     def demux_using_container(self):

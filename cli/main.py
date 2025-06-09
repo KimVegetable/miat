@@ -77,7 +77,20 @@ def main():
                     trak = video['container']['moov']['trak']
                 if trak.get('edts') == None:
                     continue
-                if trak['edts']['elst']['entries'][0]['media_time'] == 0:
+                
+                media_time = 0
+                for entry in trak['edts']['elst']['entries']:
+                    if entry['media_time'] == b'\xFF\xFF\xFF\xFF':
+                        continue
+                    else:
+                        media_time = entry['media_time']
+                
+                ctts_flag = True
+
+                if trak.get('mdia', {}).get('minf', {}).get('stbl', {}).get('ctts', None) == None:
+                    ctts_flag = False
+
+                if media_time == 0 or (ctts_flag and media_time - trak.get('mdia', {}).get('minf', {}).get('stbl', {}).get('ctts', None)['entries'][0]['sample_offset'] == 0): # arrange for lead_in
                     if video['video_streams'][0]['codec'] == 'H.264':
                         if video['video_streams'][0]['nal_units']['sps']['pic_order_cnt_type'] == 0:
                             if video['video_streams'][0]['nal_units']['slice_segments'][0]['header'].get('pic_order_cnt_lsb', '0') == 0:
@@ -109,6 +122,10 @@ def main():
                             continue
                         else:
                             media_time = entry['media_time']
+                    
+                    
+                    if trak.get('mdia', {}).get('minf', {}).get('stbl', {}).get('ctts', None) != None:
+                        media_time = media_time - trak.get('mdia', {}).get('minf', {}).get('stbl', {}).get('ctts', None)['entries'][0]['sample_offset']
 
                     if len(trak['mdia']['minf']['stbl']['stts']['entries']) > 0:
                         if media_time > trak['mdia']['minf']['stbl']['stts']['entries'][0]['sample_delta']:
