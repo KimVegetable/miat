@@ -66,7 +66,6 @@ def main():
 
             all_parsed_data.append(video.data)
 
-
         # Forensic analysis for trimmed videos
         if args.apple:
             for video in all_parsed_data:
@@ -348,7 +347,7 @@ def main():
                 if trak.get('tkhd') == None:
                     continue
 
-                print(f"\n[Analysis] \'{video['file_path']}\': [width: {trak['tkhd']['width']}, height: {trak['tkhd']['height']}]")
+                print(f"\n[Analysis] \'{video['file_path']}\': [width: {trak['tkhd']['width']}, height: {trak['tkhd']['height']}] ")
 
                 if video['container']['moov'].get('meta') != None:
                     meta = video['container']['moov'].get('meta')
@@ -357,7 +356,20 @@ def main():
                         for i, entry in enumerate(meta['keys']['entries']):
                             if meta['ilst'][i]['subatoms'][0].get('value') == None:
                                 continue
-                            print(f'key: {entry}, value: {meta['ilst'][i]['subatoms'][0]['value']}')
+                            print(f'key: {entry}, value: {meta['ilst'][i]['subatoms'][0]['value']} ')
+
+                if video['container']['moov'].get('udta') != None:
+                    meta = video['container']['moov']['udta'].get('meta')
+                
+                    if meta.get('keys') != None:
+                        for i, entry in enumerate(meta['keys']['entries']):
+                            if meta['ilst'][i]['subatoms'][0].get('value') == None:
+                                continue
+                            print(f'key: {entry}, value: {meta['ilst'][i]['subatoms'][0]['value']} ')
+
+                if video['container']['moov'].get('udta', None) != None:
+                    if video['container']['moov']['udta'].get('©xyz', None) != None:
+                        print(f"[coordinate: {video['container']['moov']['udta'].get('©xyz')}]")
 
 
         # for image file

@@ -880,6 +880,8 @@ class MP4Parser:
             return self.parse_auth(data)
         elif atom_type == 'smta':
             return self.parse_smta(data)
+        elif atom_type == '©xyz':
+            return self.parse_xyz(data)
         else:
             return {'type': atom_type, 'data': data}
 
@@ -2651,6 +2653,11 @@ class MP4Parser:
             'value': text
         }
 
+    def parse_xyz(self, data):
+        text = data[2:].decode('utf-8', errors='replace').rstrip('\x00')
+        return {
+            'value': text
+        }
 
     def parse_free(self, data):
         return {
